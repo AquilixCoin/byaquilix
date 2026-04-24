@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AQUILIX</title>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.6.2/dist/ethers.umd.min.js"></script>
+
+<style>
+body { background:#000; color:#fff; font-family:Arial; text-align:center; }
+button { padding:10px; margin:5px; cursor:pointer; }
+.box { background:#111; padding:15px; margin:10px; border-radius:10px; }
+.lock { color:red; }
+</style>
+
+</head>
+<body>
+
+<h1>🦅 AQUILIX AI ECOSYSTEM</h1>
+
+<button onclick="connectWallet()">Connect Wallet</button>
+<p id="wallet"></p>
+
+<a href="https://pancakeswap.finance/swap?outputCurrency=0x562F23a589773e14bA9D538E43e92EA9d6C271f4">
+<button>Buy on PancakeSwap</button>
+</a>
+
+<div class="box">
+<h2>🤖 AI RADAR</h2>
+<div id="radar"></div>
+</div>
+
+<div class="box">
+<h2>🪙 Stake</h2>
+<button onclick="stake()">Stake (Demo)</button>
+</div>
+
+<div class="box">
+<h2>🎁 Claim</h2>
+<button onclick="claim()">Claim Reward</button>
+<p id="reward"></p>
+</div>
+
+<div class="box">
+<h2>📄 Info</h2>
+<p>Contract: 0x562F23a589773e14bA9D538E43e92EA9d6C271f4</p>
+<a href="https://t.me/AQLXCoinchat">Telegram</a><br>
+<a href="https://x.com/AquilixCoin">Twitter</a>
+</div>
+
+<script>
+
+let user = null;
+let hasToken = false;
+
+const CONTRACT = "0x562F23a589773e14bA9D538E43e92EA9d6C271f4";
+const ABI = ["function balanceOf(address) view returns (uint256)"];
+
+async function connectWallet() {
+  if (!window.ethereum) return alert("MetaMask gerekli");
+
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  const accounts = await provider.send("eth_requestAccounts", []);
+  user = accounts[0];
+
+  document.getElementById("wallet").innerText = "Wallet: " + user;
+
+  checkToken(provider);
+}
+
+async function checkToken(provider) {
+  const contract = new ethers.Contract(CONTRACT, ABI, provider);
+  const balance = await contract.balanceOf(user);
+
+  hasToken = balance > 0n;
+
+  loadRadar();
+}
+
+function loadRadar() {
+  const div = document.getElementById("radar");
+
+  if (!hasToken) {
+    div.innerHTML = `
+      <p class="lock">🔒 Full AI Radar Locked</p>
+      <p>Buy AQUILIX to unlock</p>
+      <p>Demo Score: ${Math.floor(Math.random()*50)}</p>
+    `;
+  } else {
+    div.innerHTML = `
+      <p>🧠 AI Score: ${Math.floor(Math.random()*100)}</p>
+      <p>🐋 Whale Activity: ${Math.floor(Math.random()*100)}</p>
+      <p>📈 Trend: ${Math.floor(Math.random()*100)}</p>
+      <p style="color:lime">FULL ACCESS ACTIVE</p>
+    `;
+  }
+}
+
+function stake() {
+  alert("Stake sistemi backend + kontrat ile bağlanacak");
+}
+
+function claim() {
+  let reward = Math.floor(Math.random()*1000);
+  document.getElementById("reward").innerText = "Reward: " + reward + " AQUILIX";
+}
+
+</script>
+
+</body>
+</html>
